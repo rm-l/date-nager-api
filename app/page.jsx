@@ -1,39 +1,18 @@
-'use client'
-import { useEffect, useState } from 'react';
+'use client';
 
-async function getContent() {
-  try {
-    const response = await fetch('http://localhost:3001');
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
+import Link from 'next/link';
 
 export default function Home() {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await getContent();
-      setData(result);
-    };
-
-    fetchData();
-  }, []);
-
   return (
     <div>
-      <h1>Countries List</h1>
-      <ul>
-        {data.map((item) => (
-          <li key={item.countryCode}>
-            {item.countryCode} - {item.name}
+      <h1>Home Page</h1>
+      <nav>
+        <ul>
+          <li>
+            <Link href="/countrieslist">Countries List</Link>
           </li>
-        ))}
-      </ul>
+        </ul>
+      </nav>
     </div>
   );
 }

@@ -1,16 +1,22 @@
-import "./globals.css";
+import PropTypes from 'prop-types';
+import React from 'react';
+import './globals.css';
 
 export const metadata = {
-  title: "Date Nager API",
-  description: "DevelopsToday Assessment: ",
+  title: 'Date Nager API',
+  description: 'DevelopsToday Assessment: ',
 };
 
-export default function RootLayout({ children }) {
+function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
+
+RootLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export default RootLayout;

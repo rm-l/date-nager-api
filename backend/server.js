@@ -1,16 +1,45 @@
-'use client'
 import axios from 'axios';
 import cors from 'cors';
 import express from 'express';
 
 const app = express();
-const port = 3001;
+const port = 3010;
 
-app.use(cors())
+app.use(cors());
+app.use(express.json());
 
-app.get('/', async (req, res) => {
-    const { data } = await axios('https://date.nager.at/api/v3/AvailableCountries')
-    res.send(data);
+app.get('/countrieslist', async (req, res) => {
+    try {
+        const { data } = await axios('https://date.nager.at/api/v3/AvailableCountries');
+        res.send(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching countries list');
+    }
+});
+
+app.post('/countryinfo', async (req, res) => {
+    try {
+        const { countryCode } = req.body;
+        const { data } = await axios(`https://date.nager.at/api/v3/CountryInfo/${countryCode}`);
+        res.send(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching country info');
+    }
+});
+
+app.post('/countryflag', async (req, res) => {
+    try {
+        const { countryCode } = req.body;
+        const { data } = await axios.post('https://countriesnow.space/api/v0.1/countries/flag/images', {
+            iso2: countryCode
+        });
+        res.send(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching country flag');
+    }
 });
 
 app.listen(port, () => {
