@@ -42,6 +42,29 @@ app.post('/countryflag', async (req, res) => {
     }
 });
 
+app.post('/countrypopulation', async (req, res) => {
+    try {
+        const { country } = req.body;
+
+        if (!country) {
+            return res.status(400).send('Country parameter is required');
+        }
+
+        console.log('Received country:', country);
+
+        const response = await axios.post('https://countriesnow.space/api/v0.1/countries/population', {
+            country: country,
+        });
+
+        console.log(response.data)
+        res.send(response.data);
+    } catch (error) {
+        console.error('Error fetching country population:', error.message);
+        res.status(500).send('Error fetching country population');
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Servidor Express rodando em http://localhost:${port}`);
 });

@@ -1,17 +1,18 @@
 'use client';
+import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Line } from 'react-chartjs-2';
 
-// // Registre os componentes do Chart.js
-// ChartJS.register(
-//     CategoryScale,
-//     LinearScale,
-//     PointElement,
-//     LineElement,
-//     Title,
-//     Tooltip,
-//     Legend
-// );
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 export default function CountryInfo() {
     const searchParams = useSearchParams();
@@ -26,7 +27,6 @@ export default function CountryInfo() {
     useEffect(() => {
         const fetchCountryInfo = async () => {
             try {
-
                 const response = await fetch('http://localhost:3010/CountryInfo', {
                     method: 'POST',
                     headers: {
@@ -58,6 +58,21 @@ export default function CountryInfo() {
                 const flagData = await flagResponse.json();
                 setFlagUrl(flagData.data.flag);
 
+                const populationResponse = await fetch('http://localhost:3010/countrypopulation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ country: data.commonName })
+                });
+
+                if (!populationResponse.ok) {
+                    throw new Error('Erro ao buscar dados de população');
+                }
+
+                const populationData = await populationResponse.json();
+                setPopulationData(populationData.data.populationCounts);
+
                 setLoading(false);
             } catch (error) {
                 setError('Falha ao carregar os dados do país');
@@ -78,26 +93,27 @@ export default function CountryInfo() {
         return <p>{error}</p>;
     }
 
-    // // Prepara os dados para o gráfico
-    // const chartData = {
-    //     labels: populationData?.map(item => item.year) || [], // Anos
-    //     datasets: [
-    //         {
-    //             label: 'População',
-    //             data: populationData?.map(item => item.value) || [], // Valores de população
-    //             fill: false,
-    //             borderColor: 'rgb(75, 192, 192)',
-    //             tension: 0.1
-    //         }
-    //     ]
-    // };
+    const chartData = {
+        labels: populationData?.map(item => item.year) || [],
+        datasets: [
+            {
+                label: 'População',
+                data: populationData?.map(item => item.value) || [],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }
+        ]
+    };
+
+    console.log(populationData)
 
     return (
         <div>
             {countryData ? (
                 <div>
                     <h1>Nome: {countryData.commonName}</h1>
-                    {flagUrl && <img src={flagUrl} alt={`Flag of ${countryData.commonName}`} />} {/* Renderiza a bandeira */}
+                    {flagUrl && <img src={flagUrl} alt={`Flag of ${countryData.commonName}`} />}
                     <ul>
                         <p>Borders:</p>
                         {countryData.borders && countryData.borders.length > 0 ? (
@@ -108,16 +124,12 @@ export default function CountryInfo() {
                             <li>No borders available</li>
                         )}
                     </ul>
-                    <p>Continente: {countryData.continent}</p>
-                    {/* Renderize mais informações conforme necessário */}
-
-                    {/* Renderiza o gráfico de população */}
-                    {/* {populationData && (
+                    {populationData && (
                         <div>
                             <h2>População ao longo dos anos</h2>
                             <Line data={chartData} />
                         </div>
-                    )} */}
+                    )}
                 </div>
             ) : (
                 <p>Informações do país não encontradas.</p>
