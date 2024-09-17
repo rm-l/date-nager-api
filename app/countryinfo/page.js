@@ -39,7 +39,7 @@ export default function CountryInfo() {
   useEffect(() => {
     const fetchCountryInfo = async () => {
       try {
-        const response = await fetch(process.env.COUNTRY_INFO, {
+        const response = await fetch(process.env.NEXT_PUBLIC_COUNTRY_INFO, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ export default function CountryInfo() {
         setCountryData(data);
         setCountry(data.commonName);
 
-        const flagResponse = await fetch(process.env.COUNTRY_FLAG, {
+        const flagResponse = await fetch(process.env.NEXT_PUBLIC_COUNTRY_FLAG, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ export default function CountryInfo() {
         setFlagUrl(flagData.data.flag);
 
         const populationResponse = await fetch(
-          process.env.COUNTRY_POPULATION,
+          process.env.NEXT_PUBLIC_COUNTRY_POPULATION,
           {
             method: 'POST',
             headers: {

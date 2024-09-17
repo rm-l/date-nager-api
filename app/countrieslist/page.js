@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 async function getContent() {
   try {
-    const response = await fetch(process.env.COUNTRY_LIST);
+    const response = await fetch(process.env.NEXT_PUBLIC_COUNTRY_LIST);
     const data = await response.json();
     return data;
   } catch (error) {
