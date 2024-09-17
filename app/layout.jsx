@@ -10,7 +10,8 @@ export const metadata = {
 function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className='flex flex-col overflow-auto min-w-full min-h-screen bg-gray-300'
+      >{children}</body>
     </html>
   );
 }

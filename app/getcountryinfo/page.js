@@ -134,42 +134,68 @@ export default function getCountryInfo() {
   return (
     <div>
       {countryData ? (
-        <div>
-          <h1>Name: {countryData.commonName}</h1>
-          {flagUrl && (
-            <img src={flagUrl} alt={`Flag of ${countryData.commonName}`} />
-          )}
-          <ul>
-            <p>Border Countries
+        <div className='flex flex-col min-w-full justify-center gap-4'>
+          <div className='flex flex-row place-content-center  p-2 w-screen h-fit'>
+            <div className='flex flex-col justify-center p-5'>
+              <h1
+                className='flex flex-col text-5xl font-bold text-center justify-start align-middle'
+              >
+                {countryData.commonName}
+              </h1>
+            </div>
+            <div className='flex p-5 justify-start'>
+              {flagUrl && (
+                <img
+                  className='min-w-52 min-h-52 max-w-52 max-h-52'
+                  src={flagUrl}
+                  alt={`Flag of ${countryData.commonName}`}
+                />
+              )}
+            </div>
+          </div>
+          <div className='flex flex-col justify-center border-2 place-content-center border-gray-400 w-fit self-center rounded-md p-2 px-40'>
+            <p className='flex justify-center font-bold w-fit self-center'>
+              Border Countries
               :</p>
             {countryData.borders && countryData.borders.length > 0 ? (
               countryData.borders.map((border, index) => (
-                <li
+                <p
+                className='flex justify-center underline'
                   key={index}
                   onClick={() => handleItemClick(border.countryCode)}
                   style={{ cursor: 'pointer' }}
                 >
                   {border.commonName}
-                </li>
+                </p>
               ))
             ) : (
               <li>No borders available</li>
             )}
-          </ul>
-          {populationData && (
-            <div>
-              <h2>Population over years</h2>
-              <Line data={chartData} />
-            </div>
-          )}
+
+          </div>
+          <div>
+            {populationData && (
+              <div>
+                <h2>Population over years</h2>
+                <Line
+                  className='max-w-full max-h-80'
+                  data={chartData}
+                />
+              </div>
+            )}
+          </div>
         </div>
       ) : (
         <p>Country information not found.</p>
       )}
+      <div className='flex justify-center mt-5'>
+
       <button
-        onClick={() => handleClickHome()}>
-          Home
-        </button>
+      className='bg-slate-500 rounded-lg text-white px-5 py-3'
+      onClick={() => handleClickHome()}>
+        Back
+      </button>
+          </div>
     </div>
   );
 }
