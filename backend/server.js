@@ -1,44 +1,47 @@
 import axios from 'axios';
 import cors from 'cors';
+import 'dotenv/config';
 import express from 'express';
 
 const app = express();
-const port = 3010;
-
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 app.get('/countrieslist', async (req, res) => {
     try {
-        const { data } = await axios('https://date.nager.at/api/v3/AvailableCountries');
+        const { data } = await axios(
+            process.env.URL_AVALIBLE_COUNTRIES,
+        );
         res.send(data);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error fetching countries list');
     }
 });
 
 app.post('/countryinfo', async (req, res) => {
     try {
         const { countryCode } = req.body;
-        const { data } = await axios(`https://date.nager.at/api/v3/CountryInfo/${countryCode}`);
+        const { data } = await axios(
+            `${process.env.URL_COUNTRY_INFO}${countryCode}`,
+        );
         res.send(data);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error fetching country info');
     }
 });
 
 app.post('/countryflag', async (req, res) => {
     try {
         const { countryCode } = req.body;
-        const { data } = await axios.post('https://countriesnow.space/api/v0.1/countries/flag/images', {
-            iso2: countryCode
-        });
+        const { data } = await axios.post(
+            process.env.URL_FLAGS,
+            {
+                iso2: countryCode,
+            },
+        );
         res.send(data);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error fetching country flag');
     }
 });
 
@@ -50,21 +53,20 @@ app.post('/countrypopulation', async (req, res) => {
             return res.status(400).send('Country parameter is required');
         }
 
-        console.log('Received country:', country);
+        const response = await axios.post(
+            process.env.URL_POPULATION,
+            {
+                country: country,
+            },
+        );
 
-        const response = await axios.post('https://countriesnow.space/api/v0.1/countries/population', {
-            country: country,
-        });
-
-        console.log(response.data)
         res.send(response.data);
+
     } catch (error) {
-        console.error('Error fetching country population:', error.message);
-        res.status(500).send('Error fetching country population');
+        console.error(error.message);
     }
 });
 
-
-app.listen(port, () => {
-    console.log(`Servidor Express rodando em http://localhost:${port}`);
+app.listen(process.env.SERVER_PORT, () => {
+    console.log(`Servidor Express rodando em http://localhost:${process.env.SERVER_PORT}`);
 });

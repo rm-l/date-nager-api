@@ -1,10 +1,12 @@
 'use client';
+import 'dotenv/config';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+
 async function getContent() {
   try {
-    const response = await fetch('http://localhost:3010/countrieslist');
+    const response = await fetch(process.env.COUNTRY_LIST);
     const data = await response.json();
     return data;
   } catch (error) {
