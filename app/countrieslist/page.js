@@ -1,5 +1,5 @@
 'use client';
-import { useRouter } from 'next/navigation'; // Para manipular a navegação
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 async function getContent() {
@@ -15,7 +15,7 @@ async function getContent() {
 
 export default function CountriesList() {
   const [data, setData] = useState([]);
-  const router = useRouter(); // Hook para navegação
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,9 +26,8 @@ export default function CountriesList() {
     fetchData();
   }, []);
 
-  // Função para tratar o clique no item
   const handleItemClick = (countryCode) => {
-    router.push(`/countryinfo?code=${countryCode}`); // Redireciona com o countryCode como parâmetro na URL
+    router.push(`/countryinfo?code=${countryCode}`);
   };
 
   return (
@@ -38,8 +37,8 @@ export default function CountriesList() {
         {data.map((item) => (
           <li
             key={item.countryCode}
-            onClick={() => handleItemClick(item.countryCode)} // Chama a função no clique
-            style={{ cursor: 'pointer' }} // Para indicar que é clicável
+            onClick={() => handleItemClick(item.countryCode)}
+            style={{ cursor: 'pointer' }}
           >
             {item.countryCode} - {item.name}
           </li>

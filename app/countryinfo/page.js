@@ -1,6 +1,6 @@
 'use client';
 import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
@@ -14,7 +14,9 @@ ChartJS.register(
     Legend
 );
 
+
 export default function CountryInfo() {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const countryCode = searchParams.get('code');
     const [countryData, setCountryData] = useState(null);
@@ -41,6 +43,7 @@ export default function CountryInfo() {
 
                 const data = await response.json();
                 setCountryData(data);
+                //console.log(data)
                 setCountry(data.commonName);
 
                 const flagResponse = await fetch('http://localhost:3010/countryflag', {
@@ -97,8 +100,9 @@ export default function CountryInfo() {
         labels: populationData?.map(item => item.year) || [],
         datasets: [
             {
-                label: 'População',
+                label: 'Population',
                 data: populationData?.map(item => item.value) || [],
+
                 fill: false,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -106,7 +110,9 @@ export default function CountryInfo() {
         ]
     };
 
-    console.log(populationData)
+    const handleItemClick = (countryCode) => {
+        router.push(`/countryinfo?code=${countryCode}`);
+    };
 
     return (
         <div>
@@ -118,7 +124,12 @@ export default function CountryInfo() {
                         <p>Borders:</p>
                         {countryData.borders && countryData.borders.length > 0 ? (
                             countryData.borders.map((border, index) => (
-                                <li key={index}>{border.commonName}</li>
+                                <li key={index}
+                                    onClick={() => handleItemClick(border.countryCode)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    {border.commonName}
+                                </li>
                             ))
                         ) : (
                             <li>No borders available</li>
@@ -126,7 +137,7 @@ export default function CountryInfo() {
                     </ul>
                     {populationData && (
                         <div>
-                            <h2>População ao longo dos anos</h2>
+                            <h2>Population over years</h2>
                             <Line data={chartData} />
                         </div>
                     )}
