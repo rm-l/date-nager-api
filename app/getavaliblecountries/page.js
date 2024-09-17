@@ -15,7 +15,7 @@ async function getContent() {
   }
 }
 
-export default function CountriesList() {
+export default function getAvalibleCountries() {
   const [data, setData] = useState([]);
   const router = useRouter();
 
@@ -29,7 +29,7 @@ export default function CountriesList() {
   }, []);
 
   const handleItemClick = (countryCode) => {
-    router.push(`/countryinfo?code=${countryCode}`);
+    router.push(`/getcountryinfo?code=${countryCode}`);
   };
 
   return (

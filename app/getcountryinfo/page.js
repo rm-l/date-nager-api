@@ -25,7 +25,7 @@ ChartJS.register(
   Legend,
 );
 
-export default function CountryInfo() {
+export default function getCountryInfo() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const countryCode = searchParams.get('code');
@@ -124,7 +124,7 @@ export default function CountryInfo() {
   };
 
   const handleItemClick = (countryCode) => {
-    router.push(`/countryinfo?code=${countryCode}`);
+    router.push(`/getcountryinfo?code=${countryCode}`);
   };
 
   const handleClickHome = () => {
@@ -133,8 +133,6 @@ export default function CountryInfo() {
 
   return (
     <div>
-      <button
-        onClick={() => handleClickHome()}>home</button>
       {countryData ? (
         <div>
           <h1>Name: {countryData.commonName}</h1>
@@ -168,6 +166,10 @@ export default function CountryInfo() {
       ) : (
         <p>Country information not found.</p>
       )}
+      <button
+        onClick={() => handleClickHome()}>
+          Home
+        </button>
     </div>
   );
 }

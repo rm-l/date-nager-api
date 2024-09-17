@@ -1,17 +1,16 @@
-'use client';
+import { redirect } from 'next/navigation';
 
 import Link from 'next/link';
 
+
+
 export default function Home() {
+  redirect('/getavaliblecountries')
   return (
     <div>
       <h1>Home Page</h1>
       <nav>
-        <ul>
-          <li>
-            <Link href="/countrieslist">Countries List</Link>
-          </li>
-        </ul>
+        <Link href="/getavaliblecountries">Countries List</Link>
       </nav>
     </div>
   );
