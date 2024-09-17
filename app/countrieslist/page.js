@@ -34,7 +34,7 @@ export default function CountriesList() {
 
   return (
     <div>
-      <h1>Countries List</h1>
+      <h1>Avalible Countries List</h1>
       <ul>
         {data.map((item) => (
           <li

@@ -26,7 +26,7 @@ app.post('/countryinfo', async (req, res) => {
         );
         res.send(data);
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
     }
 });
 

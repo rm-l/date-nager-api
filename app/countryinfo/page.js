@@ -48,7 +48,8 @@ export default function CountryInfo() {
         });
 
         if (!response.ok) {
-          throw new Error('Erro ao buscar informações do país');
+          setError('Erro ao buscar informações do país');
+          console.error(error);
         }
 
         const data = await response.json();
@@ -101,7 +102,7 @@ export default function CountryInfo() {
   }, [countryCode]);
 
   if (loading) {
-    return <p>Carregando...</p>;
+    return <p>Loading...</p>;
   }
 
   if (error) {
@@ -126,16 +127,23 @@ export default function CountryInfo() {
     router.push(`/countryinfo?code=${countryCode}`);
   };
 
+  const handleClickHome = () => {
+    router.push('/');
+  }
+
   return (
     <div>
+      <button
+        onClick={() => handleClickHome()}>home</button>
       {countryData ? (
         <div>
-          <h1>Nome: {countryData.commonName}</h1>
+          <h1>Name: {countryData.commonName}</h1>
           {flagUrl && (
             <img src={flagUrl} alt={`Flag of ${countryData.commonName}`} />
           )}
           <ul>
-            <p>Borders:</p>
+            <p>Border Countries
+              :</p>
             {countryData.borders && countryData.borders.length > 0 ? (
               countryData.borders.map((border, index) => (
                 <li
@@ -158,7 +166,7 @@ export default function CountryInfo() {
           )}
         </div>
       ) : (
-        <p>Informações do país não encontradas.</p>
+        <p>Country information not found.</p>
       )}
     </div>
   );
