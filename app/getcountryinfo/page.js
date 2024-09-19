@@ -25,7 +25,7 @@ ChartJS.register(
   Legend
 );
 
-export default function getCountryInfo() {
+export default function CountryInfo() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const countryCode = searchParams.get('code');
@@ -34,10 +34,11 @@ export default function getCountryInfo() {
   const [populationData, setPopulationData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [country, setCountry] = useState('');
 
   useEffect(() => {
     const fetchCountryInfo = async () => {
+      if (!countryCode) return;
+
       try {
         const response = await fetch(process.env.NEXT_PUBLIC_COUNTRY_INFO, {
           method: 'POST',
@@ -48,13 +49,11 @@ export default function getCountryInfo() {
         });
 
         if (!response.ok) {
-          setError('Erro ao buscar informações do país');
-          console.error(error);
+          throw new Error('Erro ao buscar informações do país');
         }
 
         const data = await response.json();
         setCountryData(data);
-        setCountry(data.commonName);
 
         const flagResponse = await fetch(process.env.NEXT_PUBLIC_COUNTRY_FLAG, {
           method: 'POST',
@@ -91,15 +90,13 @@ export default function getCountryInfo() {
 
         setLoading(false);
       } catch (error) {
-        setError('Falha ao carregar os dados do país');
+        setError(error.message);
         setLoading(false);
       }
     };
 
-    if (countryCode) {
-      fetchCountryInfo();
-    }
-  }, [countryCode, error]);
+    fetchCountryInfo();
+  }, [countryCode]);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -115,7 +112,6 @@ export default function getCountryInfo() {
       {
         label: 'Population',
         data: populationData?.map((item) => item.value) || [],
-
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1,
@@ -135,7 +131,7 @@ export default function getCountryInfo() {
     <div>
       {countryData ? (
         <div className="flex flex-col min-w-full justify-center gap-4">
-          <div className="flex flex-row place-content-center  p-2 w-screen h-fit">
+          <div className="flex flex-row place-content-center p-2 w-screen h-fit">
             <div className="flex flex-col justify-center p-5">
               <h1 className="flex flex-col text-5xl font-bold text-center justify-start align-middle">
                 {countryData.commonName}
@@ -155,7 +151,7 @@ export default function getCountryInfo() {
           </div>
           <div className="flex flex-col justify-center border-2 place-content-center border-gray-400 w-fit self-center rounded-md p-2 px-40">
             <p className="flex justify-center font-bold w-fit self-center">
-              Border Countries :
+              Border Countries:
             </p>
             {countryData.borders && countryData.borders.length > 0 ? (
               countryData.borders.map((border, index) => (
@@ -187,7 +183,7 @@ export default function getCountryInfo() {
       <div className="flex justify-center mt-5">
         <button
           className="bg-slate-500 rounded-lg text-white px-5 py-3"
-          onClick={() => handleClickHome()}
+          onClick={handleClickHome}
         >
           Back
         </button>

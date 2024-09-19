@@ -9,11 +9,12 @@ async function getContent() {
     const data = await response.json();
     return data;
   } catch (error) {
+    console.error('Failed to fetch data:', error);
     return [];
   }
 }
 
-export default function getAvalibleCountries() {
+export default function AvalibleCountries() {
   const [data, setData] = useState([]);
   const router = useRouter();
 

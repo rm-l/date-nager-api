@@ -39,8 +39,7 @@
     ],
     "react/prop-types": "off",
     "no-unused-vars": "off",
-    "no-console": "off",
-    "react-hooks/rules-of-hooks": "off"
+    "no-console": "off"
   },
   "settings": {
     "react": {
