@@ -31,12 +31,20 @@ app.post('/countryinfo', async (req, res) => {
 app.post('/countryflag', async (req, res) => {
   try {
     const { countryCode } = req.body;
-    const { data } = await axios.post(process.env.URL_FLAGS, {
+    const response = await axios.post(process.env.URL_FLAGS, {
       iso2: countryCode,
     });
-    res.send(data);
+
+    const { data } = response;
+
+    if (!data || !data.data.flag) {
+      return res.json({ flag: null });
+    }
+
+    res.send({ flag: data.data.flag });
   } catch (error) {
-    console.error(error);
+    console.error('Erro ao buscar a bandeira:', error.message);
+    res.send({ flag: null });
   }
 });
 

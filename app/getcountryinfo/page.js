@@ -9,7 +9,6 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import 'dotenv/config';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -68,7 +67,8 @@ export default function CountryInfo() {
         }
 
         const flagData = await flagResponse.json();
-        setFlagUrl(flagData.data.flag);
+
+        setFlagUrl(flagData.flag || null);
 
         const populationResponse = await fetch(
           process.env.NEXT_PUBLIC_COUNTRY_POPULATION,
@@ -138,14 +138,18 @@ export default function CountryInfo() {
               </h1>
             </div>
             <div className="flex p-5 justify-start">
-              {flagUrl && (
+              {flagUrl ? (
                 <Image
-                  className="min-w-52 min-h-52 max-w-60 max-h-52"
-                  width={60}
+                  className="min-w-52 min-h-40"
+                  width={100}
                   height={52}
                   src={flagUrl}
                   alt={`Flag of ${countryData.commonName}`}
                 />
+              ) : (
+                <p className="flex justify-center self-center text-red-500">
+                  Flag not found
+                </p>
               )}
             </div>
           </div>
