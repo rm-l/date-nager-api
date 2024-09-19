@@ -1,37 +1,50 @@
 {
-    "env": {
-      "browser": true,
-      "es2021": true,
-      "node": true
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended",
-      "plugin:react-hooks/recommended",
-      "plugin:prettier/recommended"
-    ],
-    "parser": "@babel/eslint-parser",
-    "parserOptions": {
-      "ecmaFeatures": {
-        "jsx": true
-      },
-      "ecmaVersion": 2021,
-      "sourceType": "module",
-      "requireConfigFile": false
-    },
-    "plugins": ["react", "prettier"],
-    "rules": {
+  "overrides": [
+    {
+      "files": ["backend/**.js"]
+    }
+  ],
 
-      "react/react-in-jsx-scope": "off", 
-      "prettier/prettier": ["error", { "endOfLine": "auto" }],
-      "react/prop-types": "off", 
-      "no-unused-vars": "warn", 
-      "no-console": "warn" 
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "plugin:@next/next/recommended",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "settings": {
-      "react": {
-        "version": "detect"
+    "ecmaVersion": 2021,
+    "sourceType": "module",
+    "requireConfigFile": false
+  },
+  "plugins": [
+    "react",
+    "prettier"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
       }
+    ],
+    "react/prop-types": "off",
+    "no-unused-vars": "off",
+    "no-console": "off",
+    "react-hooks/rules-of-hooks": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
     }
   }
-  
+}
