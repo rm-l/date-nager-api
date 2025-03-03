@@ -99,7 +99,11 @@ export default function CountryInfo() {
   }, [countryCode]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex items-center justify-center w-screen h-screen">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   if (error) {
