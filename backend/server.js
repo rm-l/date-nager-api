@@ -9,7 +9,7 @@ app.use(cors());
 
 app.get('/countrieslist', async (req, res) => {
   try {
-    const { data } = await axios(process.env.URL_AVALIBLE_COUNTRIES);
+    const { data } = await axios(process.env.NEXT_PUBLIC_URL_AVALIBLE_COUNTRIES);
     res.send(data);
   } catch (error) {
     console.error(error);
@@ -20,7 +20,7 @@ app.post('/countryinfo', async (req, res) => {
   try {
     const { countryCode } = req.body;
     const { data } = await axios(
-      `${process.env.URL_COUNTRY_INFO}${countryCode}`
+      `${process.env.NEXT_PUBLIC_URL_COUNTRY_INFO}${countryCode}`
     );
     res.send(data);
   } catch (error) {
@@ -31,7 +31,7 @@ app.post('/countryinfo', async (req, res) => {
 app.post('/countryflag', async (req, res) => {
   try {
     const { countryCode } = req.body;
-    const response = await axios.post(process.env.URL_FLAGS, {
+    const response = await axios.post(process.env.NEXT_PUBLIC_URL_FLAGS, {
       iso2: countryCode,
     });
 
@@ -56,7 +56,7 @@ app.post('/countrypopulation', async (req, res) => {
       return res.status(400).send('Country parameter is required');
     }
 
-    const response = await axios.post(process.env.URL_POPULATION, {
+    const response = await axios.post(process.env.NEXT_PUBLIC_URL_POPULATION, {
       country: country,
     });
 
