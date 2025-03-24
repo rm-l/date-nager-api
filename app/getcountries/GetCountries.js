@@ -28,7 +28,7 @@ export default function AvalibleCountries() {
   }, []);
 
   const handleItemClick = (countryCode) => {
-    router.push(`/getinfo?code=${countryCode}`);
+    router.push(`/getcountryinfo?code=${countryCode}`);
   };
 
   return (
