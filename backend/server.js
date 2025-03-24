@@ -9,7 +9,9 @@ app.use(cors());
 
 app.get('/countrieslist', async (req, res) => {
   try {
-    const { data } = await axios(process.env.NEXT_PUBLIC_URL_AVALIBLE_COUNTRIES);
+    const { data } = await axios(
+      process.env.NEXT_PUBLIC_URL_AVALIBLE_COUNTRIES
+    );
     res.send(data);
   } catch (error) {
     console.error(error);
