@@ -24,6 +24,8 @@ ChartJS.register(
   Legend
 );
 
+export const dynamic = 'force-dynamic';
+
 export default function CountryInfo() {
   const router = useRouter();
   const searchParams = useSearchParams();
