@@ -41,52 +41,36 @@ export default function CountryInfo() {
       if (!countryCode) return;
 
       try {
-        const response = await fetch(process.env.NEXT_PUBLIC_COUNTRY_INFO, {
+        const countryResponse = await fetch('/api/countryInfo', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ countryCode }),
         });
 
-        if (!response.ok) {
+        if (!countryResponse.ok)
           throw new Error('Erro ao buscar informações do país');
-        }
+        const countryData = await countryResponse.json();
+        setCountryData(countryData);
 
-        const data = await response.json();
-        setCountryData(data);
-
-        const flagResponse = await fetch(process.env.NEXT_PUBLIC_COUNTRY_FLAG, {
+        const flagResponse = await fetch('/api/countryFlag', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ countryCode }),
         });
 
-        if (!flagResponse.ok) {
+        if (!flagResponse.ok)
           throw new Error('Erro ao buscar a bandeira do país');
-        }
-
         const flagData = await flagResponse.json();
-
         setFlagUrl(flagData.flag || null);
 
-        const populationResponse = await fetch(
-          process.env.NEXT_PUBLIC_COUNTRY_POPULATION,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ country: data.commonName }),
-          }
-        );
+        const populationResponse = await fetch('/api/countryPopulation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ country: countryData.commonName }),
+        });
 
-        if (!populationResponse.ok) {
+        if (!populationResponse.ok)
           throw new Error('Erro ao buscar dados de população');
-        }
-
         const populationData = await populationResponse.json();
         setPopulationData(populationData.data.populationCounts);
 
