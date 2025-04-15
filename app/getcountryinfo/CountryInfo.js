@@ -197,7 +197,7 @@ export default function CountryInfo() {
         <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between p-4 md:p-6 bg-blue-50 dark:bg-gray-700">
             <div className="flex flex-col md:flex-row items-center gap-4">
-              {flagUrl && (
+              {flagUrl ? (
                 <div className="w-24 h-16 md:w-32 md:h-20 relative">
                   <Image
                     src={flagUrl}
@@ -206,6 +206,10 @@ export default function CountryInfo() {
                     className="object-contain"
                   />
                 </div>
+              ) : (
+                <span className="text-red-500 dark:text-red-400 font-medium">
+                  Flag not found
+                </span>
               )}
               <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800 dark:text-white">
                 {countryData.commonName}
