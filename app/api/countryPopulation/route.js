@@ -18,9 +18,16 @@ export async function POST(req) {
     });
 
     const data = await res.json();
+    const msg = 'country data not found';
+    if (data.msg === msg) {
+      return NextResponse.json(
+        { error: 'Erro ao buscar população' },
+        { status: 500 }
+      );
+    }
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Erro ao buscar população:', error);
+    console.error('População inexistente:', error);
     return NextResponse.json(
       { error: 'Erro ao buscar população' },
       { status: 500 }

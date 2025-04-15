@@ -3,16 +3,14 @@ import React from 'react';
 import './globals.css';
 
 export const metadata = {
-  title: 'Date Nager API',
-  description: 'DevelopsToday Assessment: ',
+  title: 'Country Information App',
+  description: 'An application to view country information and population data',
 };
 
 function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="flex flex-col overflow-auto min-w-full min-h-screen bg-gray-300">
-        {children}
-      </body>
+      <body className="bg-gray-100 antialiased">{children}</body>
     </html>
   );
 }

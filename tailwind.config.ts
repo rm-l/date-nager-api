@@ -1,9 +1,11 @@
+import { heroui } from '@heroui/theme';
 /** @type {import('tailwindcss').Config} */
 const config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './node_modules/@heroui/theme/dist/components/spinner.js',
   ],
   theme: {
     extend: {
@@ -13,7 +15,7 @@ const config = {
       },
     },
   },
-  plugins: [],
+  plugins: [heroui()],
 };
 
 module.exports = config;

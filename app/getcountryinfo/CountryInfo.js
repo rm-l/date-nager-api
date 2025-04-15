@@ -1,4 +1,5 @@
 'use client';
+import { Spinner } from '@heroui/spinner';
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -69,10 +70,13 @@ export default function CountryInfo() {
           body: JSON.stringify({ country: countryData.commonName }),
         });
 
-        if (!populationResponse.ok)
-          throw new Error('Erro ao buscar dados de população');
-        const populationData = await populationResponse.json();
-        setPopulationData(populationData.data.populationCounts);
+        if (!populationResponse.ok) {
+          console.error('Erro ao buscar população');
+          setPopulationData(null);
+        } else {
+          const populationData = await populationResponse.json();
+          setPopulationData(populationData.data?.populationCounts || null);
+        }
 
         setLoading(false);
       } catch (error) {
@@ -86,14 +90,24 @@ export default function CountryInfo() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center w-screen h-screen">
-        <p>Loading...</p>
+      <div className="flex items-center justify-center w-screen h-screen bg-gray-100">
+        <Spinner className="text-blue-500" size="lg" />
       </div>
     );
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
+        <p className="text-xl font-bold text-red-500 mb-4">{error}</p>
+        <button
+          onClick={() => router.push('/')}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          Voltar para a página inicial
+        </button>
+      </div>
+    );
   }
 
   const chartData = {
@@ -103,10 +117,28 @@ export default function CountryInfo() {
         label: 'Population',
         data: populationData?.map((item) => item.value) || [],
         fill: false,
-        borderColor: 'rgb(75, 192, 192)',
+        borderColor: 'rgb(59, 130, 246)',
+        backgroundColor: 'rgba(59, 130, 246, 0.5)',
         tension: 0.1,
       },
     ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Population Over Years',
+        font: {
+          size: 16,
+        },
+      },
+    },
   };
 
   const handleItemClick = (countryCode) => {
@@ -118,70 +150,87 @@ export default function CountryInfo() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       {countryData ? (
-        <div className="flex flex-col min-w-full justify-center gap-4">
-          <div className="flex flex-row place-content-center p-2 w-screen h-fit">
-            <div className="flex flex-col justify-center p-5">
-              <h1 className="flex flex-col text-5xl font-bold text-center justify-start align-middle">
+        <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="flex flex-col md:flex-row items-center justify-between p-4 md:p-6 bg-blue-50">
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              {flagUrl && (
+                <div className="w-24 h-16 md:w-32 md:h-20 relative">
+                  <Image
+                    src={flagUrl}
+                    alt={`Flag of ${countryData.commonName}`}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              )}
+              <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800">
                 {countryData.commonName}
               </h1>
             </div>
-            <div className="flex p-5 justify-start">
-              {flagUrl ? (
-                <Image
-                  className="min-w-52 min-h-40"
-                  width={100}
-                  height={52}
-                  src={flagUrl}
-                  alt={`Flag of ${countryData.commonName}`}
-                />
+            <div className="mt-4 md:mt-0">
+              <button
+                onClick={handleClickHome}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+
+          <div className="p-4 md:p-6 space-y-6">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h2 className="text-xl font-semibold mb-3 text-gray-700">
+                Border Countries
+              </h2>
+              {countryData.borders && countryData.borders.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {countryData.borders.map((border, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleItemClick(border.countryCode)}
+                      className="px-3 py-1 bg-white border border-blue-200 rounded-md hover:bg-blue-50 transition-colors text-sm md:text-base"
+                    >
+                      {border.commonName}
+                    </button>
+                  ))}
+                </div>
               ) : (
-                <p className="flex justify-center self-center text-red-500">
-                  Flag not found
-                </p>
+                <p className="text-gray-500">No borders available</p>
+              )}
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h2 className="text-xl font-semibold mb-3 text-gray-700">
+                Population Data
+              </h2>
+              {populationData ? (
+                <div className="h-64 md:h-80 w-full">
+                  <Line data={chartData} options={chartOptions} />
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-red-500 font-medium">
+                    No population data available
+                  </p>
+                </div>
               )}
             </div>
           </div>
-          <div className="flex flex-col justify-center border-2 place-content-center border-gray-400 w-fit self-center rounded-md p-2 px-40">
-            <p className="flex justify-center font-bold w-fit self-center">
-              Border Countries:
-            </p>
-            {countryData.borders && countryData.borders.length > 0 ? (
-              countryData.borders.map((border, index) => (
-                <li
-                  className="flex justify-center underline"
-                  key={index}
-                  onClick={() => handleItemClick(border.countryCode)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {border.commonName}
-                </li>
-              ))
-            ) : (
-              <li>No borders available</li>
-            )}
-          </div>
-          <div>
-            {populationData && (
-              <div>
-                <h2>Population over years</h2>
-                <Line className="max-w-full max-h-80" data={chartData} />
-              </div>
-            )}
-          </div>
         </div>
       ) : (
-        <p>Country information not found.</p>
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <p className="text-xl font-bold text-red-500 mb-4">
+            Country information not found
+          </p>
+          <button
+            onClick={handleClickHome}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Back to Home
+          </button>
+        </div>
       )}
-      <div className="flex justify-center mt-5">
-        <button
-          className="bg-slate-500 rounded-lg text-white px-5 py-3"
-          onClick={handleClickHome}
-        >
-          Back
-        </button>
-      </div>
     </div>
   );
 }
