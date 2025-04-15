@@ -1,7 +1,9 @@
 'use client';
 import { Spinner } from '@heroui/spinner';
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { FiMoon, FiSearch, FiSun } from 'react-icons/fi';
 
 async function getContent() {
   try {
@@ -24,8 +26,11 @@ export default function AvalibleCountries() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const fetchData = async () => {
       try {
         const result = await getContent();
@@ -58,21 +63,27 @@ export default function AvalibleCountries() {
     router.push(`/getcountryinfo?code=${countryCode}`);
   };
 
-  if (loading) {
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
+  if (!mounted || loading) {
     return (
-      <div className="flex items-center justify-center w-screen h-screen bg-gray-100">
-        <Spinner className="text-blue-500" size="lg" />
+      <div className="flex items-center justify-center w-screen h-screen bg-gray-100 dark:bg-gray-900">
+        <Spinner className="text-blue-500 dark:text-blue-400" size="lg" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
-        <p className="text-xl font-bold text-red-500 mb-4">{error}</p>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100 dark:bg-gray-900">
+        <p className="text-xl font-bold text-red-500 dark:text-red-400 mb-4">
+          {error}
+        </p>
         <button
           onClick={() => router.push('/')}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white dark:text-gray-100 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
         >
           Voltar para a página inicial
         </button>
@@ -81,17 +92,30 @@ export default function AvalibleCountries() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="bg-white shadow-md">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 shadow-md">
         <div className="max-w-full mx-auto p-4 md:p-6">
-          <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800 py-4">
-            Available Countries
-          </h1>
-          <div className="mb-6 px-4 md:px-20">
+          <div className="flex items-center justify-center mb-6 relative">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white py-4 text-center">
+              Countries
+            </h1>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-yellow-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors absolute right-0"
+              aria-label="Toggle dark mode"
+            >
+              {theme === 'dark' ? <FiSun size={24} /> : <FiMoon size={24} />}
+            </button>
+          </div>
+
+          <div className="relative flex justify-center mb-6 px-4 md:px-20">
+            <div className="absolute left-[26%] md:left-[28%] top-3.5">
+              <FiSearch className="h-5 w-5 text-gray-400" />
+            </div>
             <input
               type="text"
               placeholder="Search for a country..."
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-1/2 p-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -109,20 +133,22 @@ export default function AvalibleCountries() {
                 <div
                   key={item.countryCode}
                   onClick={() => handleItemClick(item.countryCode)}
-                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+                  className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="font-bold text-blue-600">
+                    <span className="font-bold text-blue-600 dark:text-blue-400">
                       {item.countryCode}
                     </span>
-                    <span className="text-gray-700">{item.name}</span>
+                    <span className="text-gray-700 dark:text-gray-300">
+                      {item.name}
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">
+              <p className="text-gray-500 dark:text-gray-400 text-lg">
                 {searchTerm
                   ? 'No countries match your search'
                   : 'No countries available'}

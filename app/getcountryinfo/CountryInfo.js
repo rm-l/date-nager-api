@@ -10,6 +10,7 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -36,8 +37,11 @@ export default function CountryInfo() {
   const [populationData, setPopulationData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const fetchCountryInfo = async () => {
       if (!countryCode) return;
 
@@ -88,27 +92,9 @@ export default function CountryInfo() {
     fetchCountryInfo();
   }, [countryCode]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center w-screen h-screen bg-gray-100">
-        <Spinner className="text-blue-500" size="lg" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
-        <p className="text-xl font-bold text-red-500 mb-4">{error}</p>
-        <button
-          onClick={() => router.push('/')}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-        >
-          Voltar para a página inicial
-        </button>
-      </div>
-    );
-  }
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   const chartData = {
     labels: populationData?.map((item) => item.year) || [],
@@ -117,8 +103,12 @@ export default function CountryInfo() {
         label: 'Population',
         data: populationData?.map((item) => item.value) || [],
         fill: false,
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+        borderColor:
+          theme === 'dark' ? 'rgb(96, 165, 250)' : 'rgb(59, 130, 246)',
+        backgroundColor:
+          theme === 'dark'
+            ? 'rgba(96, 165, 250, 0.5)'
+            : 'rgba(59, 130, 246, 0.5)',
         tension: 0.1,
       },
     ],
@@ -129,6 +119,9 @@ export default function CountryInfo() {
     maintainAspectRatio: false,
     plugins: {
       legend: {
+        labels: {
+          color: theme === 'dark' ? '#f3f4f6' : '#111827',
+        },
         position: 'top',
       },
       title: {
@@ -137,9 +130,58 @@ export default function CountryInfo() {
         font: {
           size: 16,
         },
+        color: theme === 'dark' ? '#f3f4f6' : '#111827',
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: theme === 'dark' ? '#9ca3af' : '#6b7280',
+        },
+        grid: {
+          color:
+            theme === 'dark'
+              ? 'rgba(75, 85, 99, 0.5)'
+              : 'rgba(209, 213, 219, 0.5)',
+        },
+      },
+      y: {
+        ticks: {
+          color: theme === 'dark' ? '#9ca3af' : '#6b7280',
+        },
+        grid: {
+          color:
+            theme === 'dark'
+              ? 'rgba(75, 85, 99, 0.5)'
+              : 'rgba(209, 213, 219, 0.5)',
+        },
       },
     },
   };
+
+  if (!mounted || loading) {
+    return (
+      <div className="flex items-center justify-center w-screen h-screen bg-gray-100 dark:bg-gray-900">
+        <Spinner className="text-blue-500 dark:text-blue-400" size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100 dark:bg-gray-900">
+        <p className="text-xl font-bold text-red-500 dark:text-red-400 mb-4">
+          {error}
+        </p>
+        <button
+          onClick={() => router.push('/')}
+          className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white dark:text-gray-100 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
+        >
+          Voltar para a página inicial
+        </button>
+      </div>
+    );
+  }
 
   const handleItemClick = (countryCode) => {
     router.push(`/getcountryinfo?code=${countryCode}`);
@@ -150,10 +192,10 @@ export default function CountryInfo() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 md:p-8">
       {countryData ? (
-        <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="flex flex-col md:flex-row items-center justify-between p-4 md:p-6 bg-blue-50">
+        <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+          <div className="flex flex-col md:flex-row items-center justify-between p-4 md:p-6 bg-blue-50 dark:bg-gray-700">
             <div className="flex flex-col md:flex-row items-center gap-4">
               {flagUrl && (
                 <div className="w-24 h-16 md:w-32 md:h-20 relative">
@@ -165,14 +207,14 @@ export default function CountryInfo() {
                   />
                 </div>
               )}
-              <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800">
+              <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800 dark:text-white">
                 {countryData.commonName}
               </h1>
             </div>
-            <div className="mt-4 md:mt-0">
+            <div className="flex items-center gap-4 mt-4 md:mt-0">
               <button
                 onClick={handleClickHome}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white dark:text-gray-100 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
               >
                 Back to Home
               </button>
@@ -180,8 +222,8 @@ export default function CountryInfo() {
           </div>
 
           <div className="p-4 md:p-6 space-y-6">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h2 className="text-xl font-semibold mb-3 text-gray-700">
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+              <h2 className="text-xl font-semibold mb-3 text-gray-700 dark:text-gray-200">
                 Border Countries
               </h2>
               {countryData.borders && countryData.borders.length > 0 ? (
@@ -190,18 +232,20 @@ export default function CountryInfo() {
                     <button
                       key={index}
                       onClick={() => handleItemClick(border.countryCode)}
-                      className="px-3 py-1 bg-white border border-blue-200 rounded-md hover:bg-blue-50 transition-colors text-sm md:text-base"
+                      className="px-3 py-1 bg-white dark:bg-gray-600 border border-blue-200 dark:border-gray-500 rounded-md hover:bg-blue-50 dark:hover:bg-gray-600 transition-colors text-sm md:text-base text-gray-800 dark:text-gray-200"
                     >
                       {border.commonName}
                     </button>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500">No borders available</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  No borders available
+                </p>
               )}
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h2 className="text-xl font-semibold mb-3 text-gray-700">
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+              <h2 className="text-xl font-semibold mb-3 text-gray-700 dark:text-gray-200">
                 Population Data
               </h2>
               {populationData ? (
@@ -210,7 +254,7 @@ export default function CountryInfo() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-red-500 font-medium">
+                  <p className="text-red-500 dark:text-red-400 font-medium">
                     No population data available
                   </p>
                 </div>
@@ -220,12 +264,12 @@ export default function CountryInfo() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center min-h-screen">
-          <p className="text-xl font-bold text-red-500 mb-4">
+          <p className="text-xl font-bold text-red-500 dark:text-red-400 mb-4">
             Country information not found
           </p>
           <button
             onClick={handleClickHome}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white dark:text-gray-100 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
           >
             Back to Home
           </button>
